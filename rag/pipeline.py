@@ -94,7 +94,12 @@ def _load_pipeline():
             final_k=4,
         )
 
-        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+        llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0,
+            timeout=30,      # give up if OpenAI hasn't responded in 30 s
+            max_retries=2,   # retry transient errors (rate limits, 5xx) automatically
+        )
 
         # --- Single-turn chain (FastAPI) ---
         single_prompt = ChatPromptTemplate.from_messages([

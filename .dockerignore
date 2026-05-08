@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Vector index — mount as a volume at runtime instead
+index/
+
+# Dev-only
+venv/
+.venv/
+notebooks/
+tests/
+requirements-dev.txt
+
+# Chainlit translation files (downloaded at runtime if needed)
+.chainlit/translations/

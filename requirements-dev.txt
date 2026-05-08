@@ -1,0 +1,4 @@
+# Development and testing dependencies — not needed in production
+-r requirements.txt
+
+pytest==8.3.4
