@@ -1,4 +1,7 @@
+import json
 import logging
+from datetime import datetime, timezone
+from pathlib import Path
 
 import chainlit as cl
 
@@ -9,6 +12,8 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+FEEDBACK_FILE = Path("feedback.jsonl")
 
 _ERROR_MESSAGE = (
     "Sorry, I ran into a problem answering your question. "
@@ -54,10 +59,46 @@ async def on_message(message: cl.Message):
     history.append((message.content, result["answer"]))
     cl.user_session.set("history", history)
 
+    # Store this turn so the feedback callback can reference it
+    cl.user_session.set("last_turn", {
+        "question": message.content,
+        "answer": result["answer"],
+        "sources": result["sources"],
+    })
+
     sources_md = "\n".join(
         f"- `{s['doc_id']}` — {s['title']}" for s in result["sources"]
     )
 
     await cl.Message(
-        content=f"{result['answer']}\n\n---\n**Sources consulted:**\n{sources_md}"
+        content=f"{result['answer']}\n\n---\n**Sources consulted:**\n{sources_md}",
+        actions=[
+            cl.Action(name="feedback", value="1", label="👍 Helpful"),
+            cl.Action(name="feedback", value="-1", label="👎 Not helpful"),
+        ],
     ).send()
+
+
+@cl.action_callback("feedback")
+async def on_feedback(action: cl.Action):
+    last_turn = cl.user_session.get("last_turn")
+    if not last_turn:
+        return
+
+    rating = int(action.value)
+    record = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "rating": rating,
+        "question": last_turn["question"],
+        "answer": last_turn["answer"],
+        "sources": last_turn["sources"],
+    }
+
+    with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record) + "\n")
+
+    logger.info("Feedback recorded: rating=%d for %r", rating, last_turn["question"][:60])
+
+    emoji = "🙏" if rating == 1 else "🙏 We'll work on improving this."
+    await cl.Message(content=f"Thanks for your feedback! {emoji}").send()
+    await action.remove()

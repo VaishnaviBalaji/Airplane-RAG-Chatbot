@@ -127,6 +127,15 @@ def _load_pipeline():
         qa_chain = create_stuff_documents_chain(llm, qa_prompt, document_prompt=doc_prompt)
 
         _conv_chain = create_retrieval_chain(history_aware_retriever, qa_chain)
+
+        if os.getenv("LANGCHAIN_TRACING_V2", "").lower() == "true":
+            logger.info(
+                "LangSmith tracing ON — project: %s",
+                os.getenv("LANGCHAIN_PROJECT", "default"),
+            )
+        else:
+            logger.info("LangSmith tracing OFF (set LANGCHAIN_TRACING_V2=true to enable).")
+
         logger.info("Pipeline ready.")
 
     except PipelineError:

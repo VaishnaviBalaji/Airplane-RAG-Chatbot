@@ -33,6 +33,9 @@ index/
 *.swp
 *.swo
 
+# === LLMOps ===
+feedback.jsonl
+
 # === OS ===
 .DS_Store
 Thumbs.db

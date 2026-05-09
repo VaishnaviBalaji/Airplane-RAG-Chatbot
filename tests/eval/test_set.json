@@ -1,0 +1,42 @@
+[
+  {
+    "question": "What is the carry-on weight limit in economy class?",
+    "ground_truth": "Economy passengers may bring one cabin bag up to 7kg and one personal item up to 3kg."
+  },
+  {
+    "question": "How much does an extra checked bag cost on a short-haul flight?",
+    "ground_truth": "An additional checked bag on a short-haul flight costs GBP 60."
+  },
+  {
+    "question": "Can I change my flight booking and is there a fee?",
+    "ground_truth": "Yes, flight bookings can be changed. Fees depend on the fare type; flexible fares allow free changes while saver fares incur a change fee."
+  },
+  {
+    "question": "What are the online check-in opening times?",
+    "ground_truth": "Online check-in opens 24 hours before departure and closes 2 hours before departure for most flights."
+  },
+  {
+    "question": "What compensation am I entitled to for a 4-hour delay on a long-haul flight?",
+    "ground_truth": "For a long-haul flight delayed by 3-4 hours, passengers are entitled to GBP 520 with a 50% reduction, so GBP 260, provided the delay is not caused by extraordinary circumstances."
+  },
+  {
+    "question": "What wheelchair assistance is available at the airport?",
+    "ground_truth": "SkyLine Airways provides wheelchair assistance from check-in through to the aircraft door. Passengers should request assistance at least 48 hours before departure."
+  },
+  {
+    "question": "Can I bring my cat in the cabin and what is the fee?",
+    "ground_truth": "Yes, cats may travel in the cabin if the combined weight of pet and carrier does not exceed 8kg. The fee is GBP 50 on short-haul and GBP 100 on long-haul flights per direction."
+  },
+  {
+    "question": "How do I earn Skylines Miles and how many do I get per flight?",
+    "ground_truth": "Skylines Miles are earned on SkyLine Airways flights and partner purchases. The number of miles earned depends on the fare class and route distance."
+  },
+  {
+    "question": "How long does a refund to a credit card take?",
+    "ground_truth": "Refunds to credit or debit cards are processed within 7-14 working days."
+  },
+  {
+    "question": "What are the fees for taking golf clubs on a long-haul flight?",
+    "ground_truth": "Taking golf equipment on a long-haul flight costs GBP 70 per direction. The golf bag must weigh no more than 23kg and be packed in a hard or padded golf travel case."
+  }
+]
