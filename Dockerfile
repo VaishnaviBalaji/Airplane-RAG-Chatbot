@@ -8,8 +8,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+# Cloud Run injects PORT at runtime (default 8080).
+# Chainlit reads it via the --port flag in the CMD below.
+ENV PORT=8080
+EXPOSE 8080
 
-# Default: run the FastAPI API server
-# Override with: docker run ... chainlit run chat.py --host 0.0.0.0 --port 8080
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default: Chainlit chat UI (portfolio-facing).
+# For the FastAPI API locally, use docker-compose which overrides this CMD.
+CMD chainlit run chat.py --host 0.0.0.0 --port $PORT

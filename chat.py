@@ -1,11 +1,16 @@
 import json
 import logging
+import os
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 import chainlit as cl
+from dotenv import load_dotenv
 
 from rag.pipeline import PipelineError, answer_with_history, _load_pipeline
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -14,6 +19,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 FEEDBACK_FILE = Path("feedback.jsonl")
+
+_CHAT_USERNAME = os.getenv("CHAT_USERNAME", "admin")
+_CHAT_PASSWORD = os.getenv("CHAT_PASSWORD")
+
+
+@cl.password_auth_callback
+def auth_callback(username: str, password: str) -> Optional[cl.User]:
+    if not _CHAT_PASSWORD:
+        # No password configured — allow through and warn (useful in local dev)
+        logger.warning("CHAT_PASSWORD not set — chat UI has no authentication")
+        return cl.User(identifier=username)
+    if username == _CHAT_USERNAME and password == _CHAT_PASSWORD:
+        logger.info("User logged in: %r", username)
+        return cl.User(identifier=username, metadata={"role": "user"})
+    logger.warning("Failed login attempt for username: %r", username)
+    return None
 
 _ERROR_MESSAGE = (
     "Sorry, I ran into a problem answering your question. "
@@ -73,8 +94,8 @@ async def on_message(message: cl.Message):
     await cl.Message(
         content=f"{result['answer']}\n\n---\n**Sources consulted:**\n{sources_md}",
         actions=[
-            cl.Action(name="feedback", value="1", label="👍 Helpful"),
-            cl.Action(name="feedback", value="-1", label="👎 Not helpful"),
+            cl.Action(name="feedback", payload={"rating": 1}, label="👍 Helpful"),
+            cl.Action(name="feedback", payload={"rating": -1}, label="👎 Not helpful"),
         ],
     ).send()
 
@@ -85,7 +106,7 @@ async def on_feedback(action: cl.Action):
     if not last_turn:
         return
 
-    rating = int(action.value)
+    rating = action.payload["rating"]
     record = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "rating": rating,

@@ -10,8 +10,8 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Vector index — mount as a volume at runtime instead
-index/
+# index/ is intentionally included — Cloud Run is stateless so the index
+# must be baked into the image. For local dev, docker-compose mounts it instead.
 
 # Dev-only
 venv/
